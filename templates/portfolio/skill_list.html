@@ -1,0 +1,96 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Skills — DevFolio{% endblock %}
+
+{% block content %}
+<div class="ph"><h1 class="pt">Skill <span>Matrix</span></h1><div class="ps">// technical proficiency index</div></div>
+
+<div class="sec-h">
+  <span class="sec-t">All Skills <span class="sec-c">// {{ skills|length }} entries</span></span>
+  <button class="btn btn-p" onclick="openM('mSkill')">
+    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    add_skill()
+  </button>
+</div>
+
+<div class="skills-grid">
+  {% for skill in skills %}
+  <div class="skill-card">
+    <div class="sk-head">
+      <div>
+        <div class="sk-name">{{ skill.name }}</div>
+        <div class="sk-meta">
+          <span class="badge {% if skill.category == 'frontend' %}bc{% elif skill.category == 'backend' %}bg{% elif skill.category == 'devops' %}bo{% else %}bp{% endif %}">{{ skill.get_category_display }}</span>
+          <span class="badge {% if skill.level == 'expert' %}bc{% elif skill.level == 'advanced' %}bg{% elif skill.level == 'intermediate' %}bp{% else %}bo{% endif %}">{{ skill.get_level_display }}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="sk-pct">{{ skill.proficiency }}</div>
+        <div style="display:flex;gap:4px">
+          <a href="{% url 'portfolio:skill_edit' skill.pk %}" class="btn-ic" title="Edit">
+            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          </a>
+          <a href="{% url 'portfolio:skill_delete' skill.pk %}" class="btn-ic" style="color:var(--orange)" title="Delete">
+            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="p-track">
+      <div class="p-fill {% if skill.category == 'frontend' %}pf-c{% elif skill.category == 'backend' %}pf-g{% elif skill.category == 'devops' %}pf-o{% else %}pf-p{% endif %}" data-t="{{ skill.proficiency }}"></div>
+    </div>
+  </div>
+  {% empty %}
+  <div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--t3)">
+    <div style="font-size:40px;margin-bottom:12px;opacity:.4">⚡</div>
+    <div style="font-family:var(--mono);font-size:12px">// no skills yet — <button onclick="openM('mSkill')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first skill</button></div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Add Skill Modal -->
+<div class="modal-bd {% if open_modal %}open{% endif %}" id="mSkill">
+  <div class="modal">
+    <div class="modal-h"><span class="modal-ttl">// add_skill()</span><div class="modal-x" onclick="closeM('mSkill')">✕</div></div>
+    <div class="modal-b">
+      <form method="post" id="skillForm">
+        {% csrf_token %}
+        {% for field_data in form_fields %}
+        <div class="fg">
+          <label class="fl">{{ field_data.field.label|lower }}</label>
+          {% if field_data.is_select %}
+            <select class="fc" name="{{ field_data.field.html_name }}">
+              {% for val, lbl in field_data.field.field.choices %}
+              <option value="{{ val }}" {% if field_data.field.value == val %}selected{% endif %}>{{ lbl }}</option>
+              {% endfor %}
+            </select>
+          {% else %}
+            <input class="fc" type="{{ field_data.field.field.widget.input_type }}" name="{{ field_data.field.html_name }}"
+              value="{{ field_data.field.value|default:'' }}"
+              {% if field_data.field.field.required %}required{% endif %}
+              placeholder="{{ field_data.field.field.widget.attrs.placeholder|default:'' }}"
+              {% if field_data.field.field.widget.attrs.min is not None %}min="{{ field_data.field.field.widget.attrs.min }}"{% endif %}
+              {% if field_data.field.field.widget.attrs.max is not None %}max="{{ field_data.field.field.widget.attrs.max }}"{% endif %}>
+          {% endif %}
+          {% if field_data.field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-top:4px">{{ field_data.field.errors|join:', ' }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </form>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-d" onclick="closeM('mSkill')">cancel</button>
+      <button class="btn btn-p" form="skillForm" type="submit">save_skill()</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.p-fill').forEach(b => b.style.width = b.dataset.t + '%');
+  }, 100);
+  {% if open_modal %}openM('mSkill');{% endif %}
+});
+</script>
+{% endblock %}

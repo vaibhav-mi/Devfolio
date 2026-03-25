@@ -1,0 +1,75 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block title %}Dashboard — DevFolio{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="ph"><h1 class="pt">System <span>Overview</span></h1><div class="ps">// real-time portfolio metrics</div></div>
+
+<div class="stats-grid">
+  <div class="stat-card sc-cyan"><div class="s-icon">⚡</div><div class="s-val">{{ counts.skills }}</div><div class="s-lbl">skills</div></div>
+  <div class="stat-card sc-green"><div class="s-icon">🚀</div><div class="s-val">{{ counts.projects }}</div><div class="s-lbl">projects</div></div>
+  <div class="stat-card sc-orange"><div class="s-icon">💼</div><div class="s-val" style="color:var(--orange)">{{ counts.experiences }}</div><div class="s-lbl">experience</div></div>
+  <div class="stat-card sc-purple"><div class="s-icon">🏆</div><div class="s-val" style="color:var(--purple)">{{ counts.certifications }}</div><div class="s-lbl">certs</div></div>
+</div>
+
+<div class="charts-grid">
+  <div class="chart-card"><div class="chart-lbl">// skill radar — top 8 proficiency</div><div class="chart-wrap"><canvas id="radarChart"></canvas></div></div>
+  <div class="chart-card"><div class="chart-lbl">// skills by category</div><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
+</div>
+
+<div class="card" style="padding:0">
+  <div class="card-h" style="padding:20px 24px 16px">
+    <span class="card-title">// recent projects</span>
+    <a href="{% url 'portfolio:project_list' %}" class="btn btn-g btn-sm">view all →</a>
+  </div>
+  <div style="padding:0 24px 20px;display:flex;flex-direction:column;gap:10px">
+    {% for p in recent_projects %}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--border)">
+      <div>
+        <div style="font-weight:600;font-size:14px">{{ p.title }}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:2px">{{ p.tech_used|truncatechars:50 }}</div>
+      </div>
+      <span class="badge {% if p.status == 'completed' %}bg{% elif p.status == 'in_progress' %}bc{% else %}bo{% endif %}">{{ p.get_status_display }}</span>
+    </div>
+    {% empty %}
+    <div style="font-family:var(--mono);font-size:12px;color:var(--t3);padding:16px">// no projects yet — <a href="{% url 'portfolio:project_list' %}" style="color:var(--cyan)">add your first</a></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+Chart.defaults.color='#4a6278';
+Chart.defaults.font.family="'Space Mono',monospace";
+Chart.defaults.font.size=10;
+
+const radarLabels = {{ radar_labels|safe }};
+const radarValues = {{ radar_values|safe }};
+const barLabels   = {{ bar_labels|safe }};
+const barValues   = {{ bar_values|safe }};
+
+if(radarLabels.length) {
+  new Chart(document.getElementById('radarChart'),{
+    type:'radar',
+    data:{labels:radarLabels,datasets:[{label:'Proficiency',data:radarValues,backgroundColor:'rgba(0,212,255,0.08)',borderColor:'#00d4ff',borderWidth:1.5,pointBackgroundColor:'#00d4ff',pointBorderColor:'#080c10',pointBorderWidth:2,pointRadius:4,pointHoverRadius:6,pointHoverBackgroundColor:'#00ff94'}]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:100,ticks:{stepSize:25,color:'#4a6278',backdropColor:'transparent',font:{size:9}},grid:{color:'rgba(0,212,255,0.07)'},angleLines:{color:'rgba(0,212,255,0.07)'},pointLabels:{color:'#8ba3b8',font:{size:10,family:"'Space Mono',monospace"}}}},plugins:{legend:{display:false},tooltip:{backgroundColor:'#131a23',borderColor:'#00d4ff',borderWidth:1,titleColor:'#00d4ff',bodyColor:'#e8f4f8',callbacks:{label:ctx=>` ${ctx.raw}%`}}}}
+  });
+} else {
+  document.getElementById('radarChart').closest('.chart-card').querySelector('.chart-lbl').textContent='// add skills to see radar chart';
+}
+
+if(barLabels.length) {
+  const cc=['#00d4ff','#00ff94','#ff6b35','#bd93f9','#00d4ff','#00ff94','#ff6b35'];
+  new Chart(document.getElementById('barChart'),{
+    type:'bar',
+    data:{labels:barLabels,datasets:[{data:barValues,backgroundColor:cc.map(c=>c+'30'),borderColor:cc,borderWidth:1.5,borderRadius:4,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:'rgba(0,212,255,0.05)'},ticks:{color:'#8ba3b8'},border:{color:'rgba(0,212,255,0.1)'}},y:{beginAtZero:true,grid:{color:'rgba(0,212,255,0.05)'},ticks:{color:'#8ba3b8',stepSize:1},border:{color:'rgba(0,212,255,0.1)'}}},plugins:{legend:{display:false},tooltip:{backgroundColor:'#131a23',borderColor:'#00d4ff',borderWidth:1,titleColor:'#00d4ff',bodyColor:'#e8f4f8',callbacks:{label:ctx=>` ${ctx.raw} skill${ctx.raw>1?'s':''}`}}}}
+  });
+}
+</script>
+{% endblock %}

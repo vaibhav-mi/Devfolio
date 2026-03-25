@@ -1,0 +1,119 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Projects — DevFolio{% endblock %}
+
+{% block content %}
+<div class="ph"><h1 class="pt">Project <span>Archive</span></h1><div class="ps">// deployed systems &amp; experiments</div></div>
+
+<div class="sec-h" style="flex-wrap:wrap;gap:16px">
+  <div class="filter-bar" style="margin-bottom:0">
+    <span class="f-lbl">filter:</span>
+    <button class="f-btn active" onclick="fProj('all',this)">all</button>
+    <button class="f-btn" onclick="fProj('completed',this)">completed</button>
+    <button class="f-btn" onclick="fProj('in_progress',this)">in progress</button>
+    <button class="f-btn" onclick="fProj('planned',this)">planned</button>
+    <button class="f-btn" onclick="fProj('featured',this)">★ featured</button>
+  </div>
+  <button class="btn btn-p" onclick="openM('mProj')">
+    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    new_project()
+  </button>
+</div>
+
+<div class="projects-grid" id="projGrid">
+  {% for p in projects %}
+  <div class="proj-card" data-status="{{ p.status }}" data-featured="{{ p.featured|yesno:'true,false' }}">
+    <div class="p-thumb">
+      {% if p.thumbnail %}
+        <img src="{{ p.thumbnail.url }}" alt="{{ p.title }}" style="width:100%;height:100%;object-fit:cover">
+      {% else %}
+        <div class="p-tg" style="background:linear-gradient(135deg,#00d4ff22,#bd93f922)"></div>
+        <div class="p-ti">🚀</div>
+      {% endif %}
+      {% if p.featured %}<div class="p-feat">★ featured</div>{% endif %}
+    </div>
+    <div class="p-body">
+      <div style="margin-bottom:8px">
+        <span class="badge {% if p.status == 'completed' %}bg{% elif p.status == 'in_progress' %}bc{% else %}bo{% endif %}">{{ p.get_status_display }}</span>
+      </div>
+      <div class="p-title">{{ p.title }}</div>
+      <div class="p-desc">{{ p.description }}</div>
+      <div class="tech-tags">
+        {% for tech in p.tech_list %}<span class="tech-tag">{{ tech }}</span>{% endfor %}
+      </div>
+      <div class="p-links">
+        {% if p.github_link %}<a href="{{ p.github_link }}" target="_blank" class="btn btn-g btn-sm">⌥ github</a>{% endif %}
+        {% if p.live_link %}<a href="{{ p.live_link }}" target="_blank" class="btn btn-g btn-sm">↗ live</a>{% endif %}
+        <a href="{% url 'portfolio:project_edit' p.pk %}" class="btn-ic" style="margin-left:auto" title="Edit">
+          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+        </a>
+        <a href="{% url 'portfolio:project_delete' p.pk %}" class="btn-ic" style="color:var(--orange)" title="Delete">
+          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--t3)">
+    <div style="font-size:40px;margin-bottom:12px;opacity:.4">🚀</div>
+    <div style="font-family:var(--mono);font-size:12px">// no projects yet — <button onclick="openM('mProj')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first</button></div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Add Project Modal -->
+<div class="modal-bd {% if open_modal %}open{% endif %}" id="mProj">
+  <div class="modal">
+    <div class="modal-h"><span class="modal-ttl">// new_project()</span><div class="modal-x" onclick="closeM('mProj')">✕</div></div>
+    <div class="modal-b">
+      <form method="post" enctype="multipart/form-data" id="projForm">
+        {% csrf_token %}
+        {% for field_data in form_fields %}
+        <div class="fg">
+          <label class="fl">{{ field_data.field.label|lower }}</label>
+          {% if field_data.is_select %}
+            <select class="fc" name="{{ field_data.field.html_name }}">
+              {% for val, lbl in field_data.field.field.choices %}
+              <option value="{{ val }}" {% if field_data.field.value == val %}selected{% endif %}>{{ lbl }}</option>
+              {% endfor %}
+            </select>
+          {% elif field_data.widget_type == 'Textarea' %}
+            <textarea class="fc" name="{{ field_data.field.html_name }}" {% if field_data.field.field.required %}required{% endif %}>{{ field_data.field.value|default:'' }}</textarea>
+          {% elif field_data.widget_type == 'CheckboxInput' %}
+            <div style="display:flex;align-items:center;gap:10px">
+              <input type="checkbox" name="{{ field_data.field.html_name }}" id="f_{{ field_data.field.html_name }}" {% if field_data.field.value %}checked{% endif %} style="accent-color:var(--cyan);width:14px;height:14px">
+              <label for="f_{{ field_data.field.html_name }}" style="color:var(--t2);font-family:var(--mono);font-size:11px;cursor:pointer">mark as featured</label>
+            </div>
+          {% elif field_data.widget_type == 'ClearableFileInput' %}
+            <input class="fc" type="file" name="{{ field_data.field.html_name }}" accept="image/*">
+          {% else %}
+            <input class="fc" type="{{ field_data.field.field.widget.input_type }}" name="{{ field_data.field.html_name }}"
+              value="{{ field_data.field.value|default:'' }}"
+              {% if field_data.field.field.required %}required{% endif %}
+              placeholder="{{ field_data.field.field.widget.attrs.placeholder|default:'' }}">
+          {% endif %}
+          {% if field_data.field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-top:4px">{{ field_data.field.errors|join:', ' }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </form>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-d" onclick="closeM('mProj')">cancel</button>
+      <button class="btn btn-p" form="projForm" type="submit">save_project()</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function fProj(f, btn) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.proj-card').forEach(card => {
+    const show = f === 'all' ? true : f === 'featured' ? card.dataset.featured === 'true' : card.dataset.status === f;
+    card.style.display = show ? '' : 'none';
+  });
+}
+{% if open_modal %}document.addEventListener('DOMContentLoaded', () => openM('mProj'));{% endif %}
+</script>
+{% endblock %}

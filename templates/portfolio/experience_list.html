@@ -1,0 +1,87 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Experience — DevFolio{% endblock %}
+
+{% block content %}
+<div class="ph"><h1 class="pt">Work <span>History</span></h1><div class="ps">// professional timeline</div></div>
+
+<div class="sec-h">
+  <span class="sec-t">Timeline <span class="sec-c">// {{ experiences|length }} roles</span></span>
+  <button class="btn btn-p" onclick="openM('mExp')">
+    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    add_role()
+  </button>
+</div>
+
+<div class="timeline">
+  {% for exp in experiences %}
+  <div class="tl-item">
+    <div class="tl-dot {% if exp.is_current %}cur{% endif %}"></div>
+    <div class="tl-box">
+      <div class="tl-hd">
+        <div>
+          <div class="tl-role">{{ exp.role }}</div>
+          <div class="tl-co">// {{ exp.company }}</div>
+        </div>
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          {% if exp.is_current %}<div class="cur-tag">current</div>{% endif %}
+          <div class="tl-per">{{ exp.start_date|date:"M Y" }} → {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %} · {{ exp.duration }}</div>
+          <div style="display:flex;gap:4px">
+            <a href="{% url 'portfolio:experience_edit' exp.pk %}" class="btn-ic" title="Edit">
+              <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            </a>
+            <a href="{% url 'portfolio:experience_delete' exp.pk %}" class="btn-ic" style="color:var(--orange)" title="Delete">
+              <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% if exp.description %}<div class="tl-desc">{{ exp.description }}</div>{% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div style="text-align:center;padding:60px;color:var(--t3)">
+    <div style="font-size:40px;margin-bottom:12px;opacity:.4">💼</div>
+    <div style="font-family:var(--mono);font-size:12px">// no experience yet — <button onclick="openM('mExp')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first role</button></div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Add Experience Modal -->
+<div class="modal-bd {% if open_modal %}open{% endif %}" id="mExp">
+  <div class="modal">
+    <div class="modal-h"><span class="modal-ttl">// add_role()</span><div class="modal-x" onclick="closeM('mExp')">✕</div></div>
+    <div class="modal-b">
+      <form method="post" id="expForm">
+        {% csrf_token %}
+        {% for field_data in form_fields %}
+        <div class="fg">
+          <label class="fl">{{ field_data.field.label|lower }}</label>
+          {% if field_data.widget_type == 'Textarea' %}
+            <textarea class="fc" name="{{ field_data.field.html_name }}" placeholder="{{ field_data.field.field.widget.attrs.placeholder|default:'' }}">{{ field_data.field.value|default:'' }}</textarea>
+          {% elif field_data.widget_type == 'CheckboxInput' %}
+            <div style="display:flex;align-items:center;gap:10px">
+              <input type="checkbox" name="{{ field_data.field.html_name }}" id="f_{{ field_data.field.html_name }}" {% if field_data.field.value %}checked{% endif %} style="accent-color:var(--green);width:14px;height:14px">
+              <label for="f_{{ field_data.field.html_name }}" style="color:var(--t2);font-family:var(--mono);font-size:11px;cursor:pointer">currently working here</label>
+            </div>
+          {% else %}
+            <input class="fc" type="{{ field_data.field.field.widget.input_type }}" name="{{ field_data.field.html_name }}"
+              value="{{ field_data.field.value|default:'' }}"
+              {% if field_data.field.field.required %}required{% endif %}
+              placeholder="{{ field_data.field.field.widget.attrs.placeholder|default:'' }}">
+          {% endif %}
+          {% if field_data.field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-top:4px">{{ field_data.field.errors|join:', ' }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </form>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-d" onclick="closeM('mExp')">cancel</button>
+      <button class="btn btn-p" form="expForm" type="submit">save_role()</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>{% if open_modal %}document.addEventListener('DOMContentLoaded', () => openM('mExp'));{% endif %}</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}DevFolio{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'portfolio/css/devfolio.css' %}">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+{% if user.is_authenticated %}
+<div class="s-ov" id="sov" onclick="cSide()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo">
+    <div class="l-bracket">// personal.portfolio</div>
+    <div class="l-text">{ dev<span style="color:var(--green)">F</span>olio }<span class="l-cursor"></span></div>
+  </div>
+  <div class="s-user">
+    <div class="u-avatar">
+      {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+      {% else %}
+        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}{% if not user.first_name %}{{ user.username|first|upper }}J{% endif %}
+      {% endif %}
+    </div>
+    <div>
+      <div class="u-name">{{ user.get_full_name|default:user.username }}</div>
+      <div class="u-role">// {{ profile.tagline|default:"developer" }}</div>
+    </div>
+  </div>
+  <nav class="s-nav">
+    <div class="nav-lbl">// navigation</div>
+    <a class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" href="{% url 'portfolio:dashboard' %}">
+      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10-3a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-7z"/></svg>
+      dashboard<span class="nav-badge">home</span>
+    </a>
+    <a class="nav-item {% if active_page == 'profile' %}active{% endif %}" href="{% url 'portfolio:profile' %}">
+      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      profile
+    </a>
+    <a class="nav-item {% if active_page == 'skills' %}active{% endif %}" href="{% url 'portfolio:skill_list' %}">
+      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      skills<span class="nav-badge">{{ nav_counts.skills }}</span>
+    </a>
+    <a class="nav-item {% if active_page == 'projects' %}active{% endif %}" href="{% url 'portfolio:project_list' %}">
+      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      projects<span class="nav-badge">{{ nav_counts.projects }}</span>
+    </a>
+    <a class="nav-item {% if active_page == 'experience' %}active{% endif %}" href="{% url 'portfolio:experience_list' %}">
+      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      experience
+    </a>
+    <a class="nav-item {% if active_page == 'certifications' %}active{% endif %}" href="{% url 'portfolio:certification_list' %}">
+      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      certifications<span class="nav-badge">{{ nav_counts.certifications }}</span>
+    </a>
+  </nav>
+  <div class="s-foot">
+    <form method="post" action="{% url 'portfolio:logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn-so">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        sign_out()
+      </button>
+    </form>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div class="topbar-l">
+      <div class="burger" onclick="tSide()"><span></span><span></span><span></span></div>
+      <div class="breadcrumb">
+        <span style="color:var(--cyan)">~</span>
+        <span class="bc-sep">/</span>
+        <span>devfolio</span>
+        <span class="bc-sep">/</span>
+        <span>{{ active_page }}</span>
+      </div>
+    </div>
+    <div class="topbar-r">
+      <div class="status"><div class="s-dot"></div><span>online</span></div>
+      <div class="clock" id="clk">--:--:--</div>
+    </div>
+  </header>
+
+  <!-- Flash messages -->
+  {% if messages %}
+  <div id="flash-container">
+    {% for message in messages %}
+    <div class="flash-msg flash-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="pb">
+    {% block content %}{% endblock %}
+  </div>
+</main>
+
+{% else %}
+  {% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="{% static 'portfolio/js/devfolio.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

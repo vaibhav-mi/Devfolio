@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — DevFolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'portfolio/css/devfolio.css' %}">
+</head>
+<body>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
+  <div style="width:100%;max-width:400px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div class="l-bracket" style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.1em">// personal.portfolio</div>
+      <div class="l-text" style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--cyan);text-shadow:var(--cyanglow)">{ dev<span style="color:var(--green)">F</span>olio }</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:8px;letter-spacing:.1em">// authenticate to continue</div>
+    </div>
+
+    <div class="card" style="padding:0;">
+      <div style="padding:24px 28px 0;border-bottom:1px solid var(--border);padding-bottom:16px;">
+        <div class="card-title">// login()</div>
+      </div>
+      <div style="padding:24px 28px;">
+        {% if form.errors %}
+        <div class="flash-msg flash-error" style="margin-bottom:16px;position:static;">Invalid username or password.</div>
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="fg">
+            <label class="fl">username</label>
+            <input class="fc" type="text" name="username" autofocus placeholder="your_username" value="{{ form.username.value|default:'' }}">
+          </div>
+          <div class="fg">
+            <label class="fl">password</label>
+            <input class="fc" type="password" name="password" placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-p" style="width:100%;justify-content:center;margin-top:8px;">
+            authenticate()
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px;font-family:var(--mono);font-size:10px;color:var(--t3)">
+      Admin: <a href="/admin/" style="color:var(--cyan)">/admin/</a>
+    </div>
+  </div>
+</div>
+<script src="{% static 'portfolio/js/devfolio.js' %}"></script>
+</body>
+</html>

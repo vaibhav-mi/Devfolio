@@ -1,0 +1,80 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block title %}Profile — DevFolio{% endblock %}
+
+{% block content %}
+<div class="ph"><h1 class="pt">My <span>Profile</span></h1><div class="ps">// identity &amp; contact configuration</div></div>
+
+<div class="profile-grid">
+  <!-- Identity card -->
+  <div class="pro-card">
+    <div class="pro-av">
+      {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+      {% else %}
+        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}{% if not user.first_name %}{{ user.username|first|upper }}J{% endif %}
+      {% endif %}
+    </div>
+    <div class="pro-name">{{ user.get_full_name|default:user.username }}</div>
+    <div class="pro-tag">{{ profile.tagline|default:"// developer" }}</div>
+    {% if profile.location %}<div style="font-size:13px;color:var(--t2);margin-top:4px">📍 {{ profile.location }}</div>{% endif %}
+    {% if profile.bio %}
+    <div style="margin:16px 0;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--t2);line-height:1.6;text-align:left">{{ profile.bio }}</div>
+    {% endif %}
+    <div class="pro-links">
+      {% if profile.github %}<a class="pro-link" href="{{ profile.github }}" target="_blank">⌥ {{ profile.github|truncatechars:35 }}</a>{% endif %}
+      {% if profile.linkedin %}<a class="pro-link" href="{{ profile.linkedin }}" target="_blank">⊞ {{ profile.linkedin|truncatechars:35 }}</a>{% endif %}
+      {% if profile.twitter %}<a class="pro-link" href="{{ profile.twitter }}" target="_blank">⌘ {{ profile.twitter|truncatechars:35 }}</a>{% endif %}
+      {% if profile.website %}<a class="pro-link" href="{{ profile.website }}" target="_blank">↗ {{ profile.website|truncatechars:35 }}</a>{% endif %}
+      {% if profile.resume %}<a class="pro-link" href="{{ profile.resume.url }}" target="_blank">📄 resume.pdf</a>{% endif %}
+    </div>
+  </div>
+
+  <!-- Forms -->
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div class="card">
+      <div class="card-h"><span class="card-title">// edit profile</span></div>
+      <div class="card-b">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="fr">
+            <div class="fg"><label class="fl">first name</label><input class="fc" type="text" name="first_name" value="{{ user.first_name }}"></div>
+            <div class="fg"><label class="fl">last name</label><input class="fc" type="text" name="last_name" value="{{ user.last_name }}"></div>
+          </div>
+          {% for field in profile_form %}
+          <div class="fg">
+            <label class="fl">{{ field.label|lower }}</label>
+            {% if field.field.widget.input_type == 'textarea' %}
+              <textarea class="fc" name="{{ field.html_name }}" {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+            {% elif field.field.widget.input_type == 'file' %}
+              <input class="fc" type="file" name="{{ field.html_name }}" accept="{% if 'avatar' in field.html_name or 'badge' in field.html_name %}image/*{% else %}*{% endif %}">
+              {% if field.value %}<div style="font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:4px">// current: {{ field.value }}</div>{% endif %}
+            {% else %}
+              <input class="fc" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %} placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+            {% endif %}
+            {% if field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-top:4px">{{ field.errors|join:', ' }}</div>{% endif %}
+          </div>
+          {% endfor %}
+          <button type="submit" name="action" value="update_profile" class="btn btn-p">save_profile()</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="card-title">// change password</span></div>
+      <div class="card-b">
+        <form method="post">
+          {% csrf_token %}
+          <div class="fg"><label class="fl">current password</label><input class="fc" type="password" name="old_password" placeholder="••••••••"></div>
+          <div class="fr">
+            <div class="fg"><label class="fl">new password</label><input class="fc" type="password" name="new_password1" placeholder="••••••••"></div>
+            <div class="fg"><label class="fl">confirm</label><input class="fc" type="password" name="new_password2" placeholder="••••••••"></div>
+          </div>
+          {% for field in password_form %}{% if field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-bottom:8px">{{ field.errors|join:', ' }}</div>{% endif %}{% endfor %}
+          <button type="submit" name="action" value="change_password" class="btn btn-g">update_password()</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

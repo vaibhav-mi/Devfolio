@@ -1,0 +1,78 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Certifications — DevFolio{% endblock %}
+
+{% block content %}
+<div class="ph"><h1 class="pt">Cert <span>Vault</span></h1><div class="ps">// verified credentials &amp; achievements</div></div>
+
+<div class="sec-h">
+  <span class="sec-t">Certifications <span class="sec-c">// {{ certifications|length }} creds</span></span>
+  <button class="btn btn-p" onclick="openM('mCert')">
+    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    add_cert()
+  </button>
+</div>
+
+<div class="certs-grid">
+  {% for cert in certifications %}
+  <div class="cert-card">
+    {% if cert.badge_image %}
+      <div class="cert-badge" style="background:none;border:none"><img src="{{ cert.badge_image.url }}" alt="badge" style="width:56px;height:56px;object-fit:contain"></div>
+    {% else %}
+      <div class="cert-badge">🏆</div>
+    {% endif %}
+    <div class="cert-title">{{ cert.title }}</div>
+    <div class="cert-issuer">// {{ cert.issuer }}</div>
+    <div class="cert-meta">Issued: {{ cert.date|date:"M Y" }}{% if cert.expiry_date %} · Expires: {{ cert.expiry_date|date:"M Y" }}{% else %} · No Expiry{% endif %}</div>
+    {% if cert.credential_id %}<div class="cert-meta">ID: {{ cert.credential_id }}</div>{% endif %}
+    <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+      {% if cert.credential_url %}<a href="{{ cert.credential_url }}" target="_blank" class="btn btn-g btn-sm">verify →</a>{% endif %}
+      <a href="{% url 'portfolio:certification_edit' cert.pk %}" class="btn-ic" title="Edit">
+        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      </a>
+      <a href="{% url 'portfolio:certification_delete' cert.pk %}" class="btn-ic" style="color:var(--orange)" title="Delete">
+        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </a>
+    </div>
+  </div>
+  {% empty %}
+  <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--t3)">
+    <div style="font-size:40px;margin-bottom:12px;opacity:.4">🏆</div>
+    <div style="font-family:var(--mono);font-size:12px">// no certifications yet — <button onclick="openM('mCert')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first</button></div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Add Cert Modal -->
+<div class="modal-bd {% if open_modal %}open{% endif %}" id="mCert">
+  <div class="modal">
+    <div class="modal-h"><span class="modal-ttl">// add_cert()</span><div class="modal-x" onclick="closeM('mCert')">✕</div></div>
+    <div class="modal-b">
+      <form method="post" enctype="multipart/form-data" id="certForm">
+        {% csrf_token %}
+        {% for field_data in form_fields %}
+        <div class="fg">
+          <label class="fl">{{ field_data.field.label|lower }}</label>
+          {% if field_data.widget_type == 'ClearableFileInput' %}
+            <input class="fc" type="file" name="{{ field_data.field.html_name }}" accept="image/*">
+          {% else %}
+            <input class="fc" type="{{ field_data.field.field.widget.input_type }}" name="{{ field_data.field.html_name }}"
+              value="{{ field_data.field.value|default:'' }}"
+              {% if field_data.field.field.required %}required{% endif %}
+              placeholder="{{ field_data.field.field.widget.attrs.placeholder|default:'' }}">
+          {% endif %}
+          {% if field_data.field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-top:4px">{{ field_data.field.errors|join:', ' }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </form>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-d" onclick="closeM('mCert')">cancel</button>
+      <button class="btn btn-p" form="certForm" type="submit">save_cert()</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>{% if open_modal %}document.addEventListener('DOMContentLoaded', () => openM('mCert'));{% endif %}</script>
+{% endblock %}
