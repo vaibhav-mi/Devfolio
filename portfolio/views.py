@@ -151,6 +151,7 @@ def skill_edit(request, pk):
     skill = get_object_or_404(Skill, pk=pk, user=request.user)
     ctx = _base_context(request, 'skills')
     ctx['form'] = SkillForm(instance=skill)
+    ctx['form_fields'] = _get_form_fields_with_widget_types(ctx['form'])
     ctx['object'] = skill
 
     if request.method == 'POST':
@@ -160,6 +161,7 @@ def skill_edit(request, pk):
             messages.success(request, 'Skill updated.')
             return redirect('portfolio:skill_list')
         ctx['form'] = form
+        ctx['form_fields'] = _get_form_fields_with_widget_types(form)
 
     return render(request, 'portfolio/skill_form.html', ctx)
 
@@ -211,6 +213,7 @@ def project_edit(request, pk):
     project = get_object_or_404(Project, pk=pk, user=request.user)
     ctx = _base_context(request, 'projects')
     ctx['form'] = ProjectForm(instance=project)
+    ctx['form_fields'] = _get_form_fields_with_widget_types(ctx['form'])
     ctx['object'] = project
 
     if request.method == 'POST':
@@ -220,6 +223,7 @@ def project_edit(request, pk):
             messages.success(request, 'Project updated.')
             return redirect('portfolio:project_list')
         ctx['form'] = form
+        ctx['form_fields'] = _get_form_fields_with_widget_types(form)
 
     return render(request, 'portfolio/project_form.html', ctx)
 
@@ -271,6 +275,7 @@ def experience_edit(request, pk):
     experience = get_object_or_404(Experience, pk=pk, user=request.user)
     ctx = _base_context(request, 'experience')
     ctx['form'] = ExperienceForm(instance=experience)
+    ctx['form_fields'] = _get_form_fields_with_widget_types(ctx['form'])
     ctx['object'] = experience
 
     if request.method == 'POST':
@@ -280,6 +285,7 @@ def experience_edit(request, pk):
             messages.success(request, 'Experience updated.')
             return redirect('portfolio:experience_list')
         ctx['form'] = form
+        ctx['form_fields'] = _get_form_fields_with_widget_types(form)
 
     return render(request, 'portfolio/experience_form.html', ctx)
 
@@ -331,6 +337,7 @@ def certification_edit(request, pk):
     certification = get_object_or_404(Certification, pk=pk, user=request.user)
     ctx = _base_context(request, 'certifications')
     ctx['form'] = CertificationForm(instance=certification)
+    ctx['form_fields'] = _get_form_fields_with_widget_types(ctx['form'])
     ctx['object'] = certification
 
     if request.method == 'POST':
@@ -340,6 +347,7 @@ def certification_edit(request, pk):
             messages.success(request, 'Certification updated.')
             return redirect('portfolio:certification_list')
         ctx['form'] = form
+        ctx['form_fields'] = _get_form_fields_with_widget_types(form)
 
     return render(request, 'portfolio/certification_form.html', ctx)
 

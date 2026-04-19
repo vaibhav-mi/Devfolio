@@ -11,32 +11,32 @@
     <div class="card-b">
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% for field in form %}
+        {% for field_data in form_fields %}
         <div class="fg">
-          <label class="fl">{{ field.label|lower }}</label>
-          {% if field.field.widget.__class__.__name__ == 'Select' %}
-            <select class="fc" name="{{ field.html_name }}">
-              {% for val, lbl in field.field.choices %}
-              <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ lbl }}</option>
+          <label class="fl">{{ field_data.field.label|lower }}</label>
+          {% if field_data.is_select %}
+            <select class="fc" name="{{ field_data.field.html_name }}">
+              {% for val, lbl in field_data.field.field.choices %}
+              <option value="{{ val }}" {% if field_data.field.value == val %}selected{% endif %}>{{ lbl }}</option>
               {% endfor %}
             </select>
-          {% elif field.field.widget.__class__.__name__ == 'Textarea' %}
-            <textarea class="fc" name="{{ field.html_name }}" {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
-          {% elif field.field.widget.__class__.__name__ == 'CheckboxInput' %}
+          {% elif field_data.widget_type == 'Textarea' %}
+            <textarea class="fc" name="{{ field_data.field.html_name }}" {% if field_data.field.field.required %}required{% endif %}>{{ field_data.field.value|default:'' }}</textarea>
+          {% elif field_data.widget_type == 'CheckboxInput' %}
             <div style="display:flex;align-items:center;gap:10px">
-              <input type="checkbox" name="{{ field.html_name }}" id="ef_{{ field.html_name }}" {% if field.value %}checked{% endif %} style="accent-color:var(--cyan);width:14px;height:14px">
-              <label for="ef_{{ field.html_name }}" style="color:var(--t2);font-family:var(--mono);font-size:11px;cursor:pointer">{{ field.label }}</label>
+              <input type="checkbox" name="{{ field_data.field.html_name }}" id="ef_{{ field_data.field.html_name }}" {% if field_data.field.value %}checked{% endif %} style="accent-color:var(--cyan);width:14px;height:14px">
+              <label for="ef_{{ field_data.field.html_name }}" style="color:var(--t2);font-family:var(--mono);font-size:11px;cursor:pointer">{{ field_data.field.label }}</label>
             </div>
-          {% elif field.field.widget.__class__.__name__ == 'ClearableFileInput' %}
-            <input class="fc" type="file" name="{{ field.html_name }}" accept="image/*">
-            {% if field.value %}<div style="font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:4px">// current: {{ field.value }}</div>{% endif %}
+          {% elif field_data.widget_type == 'ClearableFileInput' %}
+            <input class="fc" type="file" name="{{ field_data.field.html_name }}" accept="image/*">
+            {% if field_data.field.value %}<div style="font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:4px">// current: {{ field_data.field.value }}</div>{% endif %}
           {% else %}
-            <input class="fc" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}"
-              value="{{ field.value|default:'' }}"
-              {% if field.field.required %}required{% endif %}
-              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+            <input class="fc" type="{{ field_data.field.field.widget.input_type }}" name="{{ field_data.field.html_name }}"
+              value="{{ field_data.field.value|default:'' }}"
+              {% if field_data.field.field.required %}required{% endif %}
+              placeholder="{{ field_data.field.field.widget.attrs.placeholder|default:'' }}">
           {% endif %}
-          {% if field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-top:4px">{{ field.errors|join:', ' }}</div>{% endif %}
+          {% if field_data.field.errors %}<div style="color:var(--orange);font-family:var(--mono);font-size:10px;margin-top:4px">{{ field_data.field.errors|join:', ' }}</div>{% endif %}
         </div>
         {% endfor %}
         <div style="display:flex;gap:10px;margin-top:8px">
