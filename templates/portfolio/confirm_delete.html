@@ -8,7 +8,7 @@
       <h2 style="font-weight:800;font-size:20px;margin-bottom:8px">Delete {{ object_type }}?</h2>
       <p style="color:var(--t2);font-size:14px;margin-bottom:24px;line-height:1.6">
         You are about to permanently delete <strong style="color:var(--t1)">{{ object }}</strong>.<br>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--orange)">// this action cannot be undone</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--orange)">this action cannot be undone</span>
       </p>
       <form method="post" style="display:flex;gap:10px;justify-content:center">
         {% csrf_token %}

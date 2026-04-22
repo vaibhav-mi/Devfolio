@@ -2,10 +2,10 @@
 {% block title %}Certifications — DevFolio{% endblock %}
 
 {% block content %}
-<div class="ph"><h1 class="pt">Cert <span>Vault</span></h1><div class="ps">// verified credentials &amp; achievements</div></div>
+<div class="ph"><h1 class="pt">Cert <span>Vault</span></h1><div class="ps">verified credentials &amp; achievements</div></div>
 
 <div class="sec-h">
-  <span class="sec-t">Certifications <span class="sec-c">// {{ certifications|length }} creds</span></span>
+  <span class="sec-t">Certifications <span class="sec-c">{{ certifications|length }} creds</span></span>
   <button class="btn btn-p" onclick="openM('mCert')">
     <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
     add_cert()
@@ -21,7 +21,7 @@
       <div class="cert-badge">🏆</div>
     {% endif %}
     <div class="cert-title">{{ cert.title }}</div>
-    <div class="cert-issuer">// {{ cert.issuer }}</div>
+    <div class="cert-issuer">{{ cert.issuer }}</div>
     <div class="cert-meta">Issued: {{ cert.date|date:"M Y" }}{% if cert.expiry_date %} · Expires: {{ cert.expiry_date|date:"M Y" }}{% else %} · No Expiry{% endif %}</div>
     {% if cert.credential_id %}<div class="cert-meta">ID: {{ cert.credential_id }}</div>{% endif %}
     <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
@@ -37,7 +37,7 @@
   {% empty %}
   <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--t3)">
     <div style="font-size:40px;margin-bottom:12px;opacity:.4">🏆</div>
-    <div style="font-family:var(--mono);font-size:12px">// no certifications yet — <button onclick="openM('mCert')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first</button></div>
+    <div style="font-family:var(--mono);font-size:12px">no certifications yet — <button onclick="openM('mCert')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first</button></div>
   </div>
   {% endfor %}
 </div>
@@ -45,7 +45,7 @@
 <!-- Add Cert Modal -->
 <div class="modal-bd {% if open_modal %}open{% endif %}" id="mCert">
   <div class="modal">
-    <div class="modal-h"><span class="modal-ttl">// add_cert()</span><div class="modal-x" onclick="closeM('mCert')">✕</div></div>
+    <div class="modal-h"><span class="modal-ttl">add_cert()</span><div class="modal-x" onclick="closeM('mCert')">✕</div></div>
     <div class="modal-b">
       <form method="post" enctype="multipart/form-data" id="certForm">
         {% csrf_token %}

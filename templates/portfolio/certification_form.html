@@ -3,11 +3,11 @@
 {% block content %}
 <div class="ph">
   <h1 class="pt">Edit <span>{{ object }}</span></h1>
-  <div class="ps">// modify existing record</div>
+  <div class="ps">modify existing record</div>
 </div>
 <div style="max-width:680px">
   <div class="card" style="padding:0">
-    <div class="card-h" style="padding:20px 24px 16px"><span class="card-title">// edit_record()</span></div>
+    <div class="card-h" style="padding:20px 24px 16px"><span class="card-title">edit_record()</span></div>
     <div class="card-b">
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -29,7 +29,7 @@
             </div>
           {% elif field_data.widget_type == 'ClearableFileInput' %}
             <input class="fc" type="file" name="{{ field_data.field.html_name }}" accept="image/*">
-            {% if field_data.field.value %}<div style="font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:4px">// current: {{ field_data.field.value }}</div>{% endif %}
+            {% if field_data.field.value %}<div style="font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:4px">current: {{ field_data.field.value }}</div>{% endif %}
           {% else %}
             <input class="fc" type="{{ field_data.field.field.widget.input_type }}" name="{{ field_data.field.html_name }}"
               value="{{ field_data.field.value|default:'' }}"

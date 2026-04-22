@@ -17,7 +17,7 @@
 
 <aside class="sidebar" id="sidebar">
   <div class="s-logo">
-    <div class="l-bracket">// personal.portfolio</div>
+    <div class="l-bracket">personal.portfolio</div>
     <div class="l-text">{ dev<span style="color:var(--green)">F</span>olio }<span class="l-cursor"></span></div>
   </div>
   <div class="s-user">
@@ -30,11 +30,11 @@
     </div>
     <div>
       <div class="u-name">{{ user.get_full_name|default:user.username }}</div>
-      <div class="u-role">// {{ profile.tagline|default:"developer" }}</div>
+      <div class="u-role">{{ profile.tagline|default:"developer" }}</div>
     </div>
   </div>
   <nav class="s-nav">
-    <div class="nav-lbl">// navigation</div>
+    <div class="nav-lbl">navigation</div>
     <a class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" href="{% url 'portfolio:dashboard' %}">
       <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10-3a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-7z"/></svg>
       dashboard<span class="nav-badge">home</span>

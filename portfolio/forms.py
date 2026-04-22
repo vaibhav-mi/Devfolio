@@ -10,7 +10,7 @@ class ProfileForm(forms.ModelForm):
         exclude = ['user']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4}),
-            'tagline': forms.TextInput(attrs={'placeholder': '// your tagline here'}),
+            'tagline': forms.TextInput(attrs={'placeholder': 'your tagline here'}),
             'location': forms.TextInput(attrs={'placeholder': 'City, Country'}),
             'github': forms.URLInput(attrs={'placeholder': 'https://github.com/username'}),
             'linkedin': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/username'}),

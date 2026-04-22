@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="ph"><h1 class="pt">System <span>Overview</span></h1><div class="ps">// real-time portfolio metrics</div></div>
+<div class="ph"><h1 class="pt">System <span>Overview</span></h1><div class="ps">real-time portfolio metrics</div></div>
 
 <div class="stats-grid">
   <div class="stat-card sc-cyan"><div class="s-icon">⚡</div><div class="s-val">{{ counts.skills }}</div><div class="s-lbl">skills</div></div>
@@ -17,13 +17,13 @@
 </div>
 
 <div class="charts-grid">
-  <div class="chart-card"><div class="chart-lbl">// skill radar — top 8 proficiency</div><div class="chart-wrap"><canvas id="radarChart"></canvas></div></div>
-  <div class="chart-card"><div class="chart-lbl">// skills by category</div><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
+  <div class="chart-card"><div class="chart-lbl">skill radar — top 8 proficiency</div><div class="chart-wrap"><canvas id="radarChart"></canvas></div></div>
+  <div class="chart-card"><div class="chart-lbl">skills by category</div><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
 </div>
 
 <div class="card" style="padding:0">
   <div class="card-h" style="padding:20px 24px 16px">
-    <span class="card-title">// recent projects</span>
+    <span class="card-title">recent projects</span>
     <a href="{% url 'portfolio:project_list' %}" class="btn btn-g btn-sm">view all →</a>
   </div>
   <div style="padding:0 24px 20px;display:flex;flex-direction:column;gap:10px">
@@ -36,7 +36,7 @@
       <span class="badge {% if p.status == 'completed' %}bg{% elif p.status == 'in_progress' %}bc{% else %}bo{% endif %}">{{ p.get_status_display }}</span>
     </div>
     {% empty %}
-    <div style="font-family:var(--mono);font-size:12px;color:var(--t3);padding:16px">// no projects yet — <a href="{% url 'portfolio:project_list' %}" style="color:var(--cyan)">add your first</a></div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--t3);padding:16px">no projects yet — <a href="{% url 'portfolio:project_list' %}" style="color:var(--cyan)">add your first</a></div>
     {% endfor %}
   </div>
 </div>
@@ -60,7 +60,7 @@ if(radarLabels.length) {
     options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:100,ticks:{stepSize:25,color:'#4a6278',backdropColor:'transparent',font:{size:9}},grid:{color:'rgba(0,212,255,0.07)'},angleLines:{color:'rgba(0,212,255,0.07)'},pointLabels:{color:'#8ba3b8',font:{size:10,family:"'Space Mono',monospace"}}}},plugins:{legend:{display:false},tooltip:{backgroundColor:'#131a23',borderColor:'#00d4ff',borderWidth:1,titleColor:'#00d4ff',bodyColor:'#e8f4f8',callbacks:{label:ctx=>` ${ctx.raw}%`}}}}
   });
 } else {
-  document.getElementById('radarChart').closest('.chart-card').querySelector('.chart-lbl').textContent='// add skills to see radar chart';
+  document.getElementById('radarChart').closest('.chart-card').querySelector('.chart-lbl').textContent='add skills to see radar chart';
 }
 
 if(barLabels.length) {

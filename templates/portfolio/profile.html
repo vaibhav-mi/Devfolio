@@ -16,7 +16,7 @@
       {% endif %}
     </div>
     <div class="pro-name">{{ user.get_full_name|default:user.username }}</div>
-    <div class="pro-tag">{{ profile.tagline|default:"// developer" }}</div>
+    <div class="pro-tag">{{ profile.tagline|default:"developer" }}</div>
     {% if profile.location %}<div style="font-size:13px;color:var(--t2);margin-top:4px">📍 {{ profile.location }}</div>{% endif %}
     {% if profile.bio %}
     <div style="margin:16px 0;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--t2);line-height:1.6;text-align:left">{{ profile.bio }}</div>
@@ -33,7 +33,7 @@
   <!-- Forms -->
   <div style="display:flex;flex-direction:column;gap:20px">
     <div class="card">
-      <div class="card-h"><span class="card-title">// edit profile</span></div>
+      <div class="card-h"><span class="card-title">edit profile</span></div>
       <div class="card-b">
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
@@ -48,7 +48,7 @@
               <textarea class="fc" name="{{ field.html_name }}" {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
             {% elif field.field.widget.input_type == 'file' %}
               <input class="fc" type="file" name="{{ field.html_name }}" accept="{% if 'avatar' in field.html_name or 'badge' in field.html_name %}image/*{% else %}*{% endif %}">
-              {% if field.value %}<div style="font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:4px">// current: {{ field.value }}</div>{% endif %}
+              {% if field.value %}<div style="font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:4px">current: {{ field.value }}</div>{% endif %}
             {% else %}
               <input class="fc" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %} placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
             {% endif %}
@@ -61,7 +61,7 @@
     </div>
 
     <div class="card">
-      <div class="card-h"><span class="card-title">// change password</span></div>
+      <div class="card-h"><span class="card-title">change password</span></div>
       <div class="card-b">
         <form method="post">
           {% csrf_token %}

@@ -2,7 +2,7 @@
 {% block title %}Projects — DevFolio{% endblock %}
 
 {% block content %}
-<div class="ph"><h1 class="pt">Project <span>Archive</span></h1><div class="ps">// deployed systems &amp; experiments</div></div>
+<div class="ph"><h1 class="pt">Project <span>Archive</span></h1><div class="ps">deployed systems &amp; experiments</div></div>
 
 <div class="sec-h" style="flex-wrap:wrap;gap:16px">
   <div class="filter-bar" style="margin-bottom:0">
@@ -55,7 +55,7 @@
   {% empty %}
   <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--t3)">
     <div style="font-size:40px;margin-bottom:12px;opacity:.4">🚀</div>
-    <div style="font-family:var(--mono);font-size:12px">// no projects yet — <button onclick="openM('mProj')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first</button></div>
+    <div style="font-family:var(--mono);font-size:12px">no projects yet — <button onclick="openM('mProj')" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-family:var(--mono);font-size:12px">add your first</button></div>
   </div>
   {% endfor %}
 </div>
@@ -63,7 +63,7 @@
 <!-- Add Project Modal -->
 <div class="modal-bd {% if open_modal %}open{% endif %}" id="mProj">
   <div class="modal">
-    <div class="modal-h"><span class="modal-ttl">// new_project()</span><div class="modal-x" onclick="closeM('mProj')">✕</div></div>
+    <div class="modal-h"><span class="modal-ttl">new_project()</span><div class="modal-x" onclick="closeM('mProj')">✕</div></div>
     <div class="modal-b">
       <form method="post" enctype="multipart/form-data" id="projForm">
         {% csrf_token %}
