@@ -367,3 +367,4 @@ def certification_delete(request, pk):
 
     return render(request, 'portfolio/confirm_delete.html', ctx)
 
+# ── End ─────────────────────────────────────────────────────────────
